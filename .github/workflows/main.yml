@@ -1,0 +1,32 @@
+name: Sync With Forked Repo
+
+on:
+  workflow_dispatch: # allow manual run
+  schedule:
+    - cron: '0 0 * * *' # every night
+
+jobs:
+  syncing_with_forked_repo:
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.TOKEN }}
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@main
+
+    - name: Set up Git
+      run: |
+        git config user.email "sarangsurve126@gmail.com"
+        git config user.name "sarangsurve"
+        git remote add upstream https://github.com/imartinez/privateGPT.git
+        git fetch upstream master
+
+    - name: Check for changes from upstream
+      run: |
+        if [ $(git rev-list --count HEAD..upstream/master) -gt 0 ]; then
+          git checkout -b update-from-upstream master
+          git merge --allow-unrelated-histories -X theirs upstream/master
+          git push origin update-from-upstream:master
+        fi
