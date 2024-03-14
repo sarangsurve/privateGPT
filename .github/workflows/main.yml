@@ -22,7 +22,6 @@ jobs:
         git config user.name "sarangsurve"
         git remote add upstream https://github.com/imartinez/privateGPT.git
         git fetch upstream master
-
     - name: Check for changes from upstream
       run: |
         if [ $(git rev-list --count HEAD..upstream/master) -gt 0 ]; then
